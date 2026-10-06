@@ -1,6 +1,11 @@
 // Copyright 2026 Lalit Maganti
 // SPDX-License-Identifier: Apache-2.0
 
+#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
+pub(crate) use std::time::{Instant, SystemTime, UNIX_EPOCH};
+#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+pub(crate) use web_time::{Instant, SystemTime, UNIX_EPOCH};
+
 /// Reads an OS clock in nanoseconds through `clock_gettime`.
 #[cfg(any(target_os = "linux", target_os = "android"))]
 #[inline(always)]
@@ -177,13 +182,13 @@ pub(crate) fn process_id() -> u32 {
     std::process::id()
 }
 
+#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+pub(crate) fn process_name() -> String {
+    "WASM instance".into()
+}
+
 // A browser capture describes one WASM instance/worker, not an OS process.
 #[cfg(all(target_family = "wasm", target_os = "unknown"))]
 pub(crate) fn process_id() -> u32 {
     1
-}
-
-#[cfg(all(target_family = "wasm", target_os = "unknown"))]
-pub(crate) fn process_name() -> String {
-    "WASM instance".into()
 }

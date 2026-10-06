@@ -6,13 +6,11 @@
 //! This module owns sequence encoding state and packet-level schema writes.
 
 use std::ops::{Deref, DerefMut};
-#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
-use std::time::{SystemTime, UNIX_EPOCH};
-#[cfg(all(target_family = "wasm", target_os = "unknown"))]
-use web_time::{SystemTime, UNIX_EPOCH};
 
 use crate::emit::schema::*;
-use crate::platform::{ClockDomain, monotonic_ns, os_tid, process_name, trace_clock_domain};
+use crate::platform::{
+    ClockDomain, SystemTime, UNIX_EPOCH, monotonic_ns, os_tid, process_name, trace_clock_domain,
+};
 use crate::proto::{MessageToken, ProtoBuffer};
 use crate::runtime::{Inner, PerThreadBuf, PtrMap};
 use crate::thread::ThreadCtx;

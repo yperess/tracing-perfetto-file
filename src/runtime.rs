@@ -9,13 +9,9 @@ use std::io::Write;
 use std::num::NonZeroU64;
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
-#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
-use std::time::Instant;
-#[cfg(all(target_family = "wasm", target_os = "unknown"))]
-use web_time::Instant;
 
 use crate::SpanMode;
-use crate::platform::trace_clock_ns;
+use crate::platform::{Instant, trace_clock_ns};
 use crate::span_state::SpanStore;
 use crate::thread::acquire;
 
