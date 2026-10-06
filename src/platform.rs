@@ -29,7 +29,7 @@ fn os_clock_ns(clock_id: i32) -> Option<u64> {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-#[expect(
+#[allow(
     dead_code,
     reason = "each target uses one compile-time-selected clock domain"
 )]
@@ -161,6 +161,7 @@ pub(crate) fn os_tid() -> Option<u64> {
     None
 }
 
+#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
 pub(crate) fn process_name() -> String {
     std::env::current_exe()
         .ok()
@@ -169,4 +170,20 @@ pub(crate) fn process_name() -> String {
                 .map(|name| name.to_string_lossy().into_owned())
         })
         .unwrap_or_else(|| format!("process {}", std::process::id()))
+}
+
+#[cfg(not(all(target_family = "wasm", target_os = "unknown")))]
+pub(crate) fn process_id() -> u32 {
+    std::process::id()
+}
+
+// A browser capture describes one WASM instance/worker, not an OS process.
+#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+pub(crate) fn process_id() -> u32 {
+    1
+}
+
+#[cfg(all(target_family = "wasm", target_os = "unknown"))]
+pub(crate) fn process_name() -> String {
+    "WASM instance".into()
 }
